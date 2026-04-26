@@ -1,10 +1,10 @@
 # pnrr-lake
 
-Frozen DuckLake con i dati open del PNRR italiano, interrogabile da chiunque
-via DuckDB senza server, senza registrazione, senza API key.
+Frozen DuckLake sperimentale con due dataset open del PNRR italiano
+(progetti e localizzazione), interrogabile via DuckDB senza server,
+senza registrazione, senza API key.
 
 Fonte: [italiadomani.gov.it](https://www.italiadomani.gov.it/content/sogei-ng/it/it/catalogo-open-data.html)
-— aggiornamento automatico dal sito ufficiale.
 
 ---
 
