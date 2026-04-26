@@ -29,7 +29,6 @@ LOAD ducklake;
 LOAD httpfs;
 ATTACH 'ducklake:https://raw.githubusercontent.com/aborruso/pnrr-lake/main/lake.ducklake' AS lake;
 USE lake;
-
 SHOW TABLES;
 SELECT COUNT(*) FROM progetti;
 EOF
@@ -39,26 +38,54 @@ EOF
 
 ## Query di esempio
 
-```sql
--- finanziamento PNRR per missione (miliardi €)
+**Finanziamento PNRR per missione (miliardi €)**
+
+```bash
+duckdb << 'EOF'
+LOAD ducklake; LOAD httpfs;
+ATTACH 'ducklake:https://raw.githubusercontent.com/aborruso/pnrr-lake/main/lake.ducklake' AS lake;
+USE lake;
 SELECT Missione, "Descrizione Missione",
   ROUND(SUM("Finanziamento PNRR") / 1e9, 2) AS miliardi_eur
 FROM progetti
-GROUP BY ALL
-ORDER BY miliardi_eur DESC;
+GROUP BY ALL ORDER BY miliardi_eur DESC;
+EOF
+```
 
--- stato avanzamento
+**Stato avanzamento progetti**
+
+```bash
+duckdb << 'EOF'
+LOAD ducklake; LOAD httpfs;
+ATTACH 'ducklake:https://raw.githubusercontent.com/aborruso/pnrr-lake/main/lake.ducklake' AS lake;
+USE lake;
 SELECT "Stato Avanzamento Progetto", COUNT(*) AS n
 FROM progetti
 GROUP BY 1 ORDER BY n DESC;
+EOF
+```
 
--- progetti per regione
+**Progetti per regione**
+
+```bash
+duckdb << 'EOF'
+LOAD ducklake; LOAD httpfs;
+ATTACH 'ducklake:https://raw.githubusercontent.com/aborruso/pnrr-lake/main/lake.ducklake' AS lake;
+USE lake;
 SELECT "Descrizione Regione", COUNT(DISTINCT CUP) AS n_progetti
 FROM localizzazione
 WHERE "Descrizione Regione" != 'AMBITO NAZIONALE'
 GROUP BY 1 ORDER BY n_progetti DESC;
+EOF
+```
 
--- join: finanziamento medio per regione
+**Finanziamento medio per regione (join)**
+
+```bash
+duckdb << 'EOF'
+LOAD ducklake; LOAD httpfs;
+ATTACH 'ducklake:https://raw.githubusercontent.com/aborruso/pnrr-lake/main/lake.ducklake' AS lake;
+USE lake;
 SELECT l."Descrizione Regione",
   COUNT(DISTINCT p.CUP) AS n_progetti,
   ROUND(AVG(p."Finanziamento PNRR") / 1000, 1) AS media_k_eur
@@ -66,6 +93,7 @@ FROM progetti p
 JOIN localizzazione l ON p.CUP = l.CUP
 WHERE l."Descrizione Regione" != 'AMBITO NAZIONALE'
 GROUP BY 1 ORDER BY media_k_eur DESC;
+EOF
 ```
 
 ---
